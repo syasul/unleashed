@@ -4,7 +4,7 @@ import { auth } from '../config/firebase'
 import { Box } from '@mui/material'
 import BarangTable from '../components/BarangTable';
 
-const Home = () => {
+const Home = ({link}) => {
     const [user] = useAuthState(auth)
     return (
         <>

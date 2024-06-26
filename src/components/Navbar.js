@@ -17,8 +17,7 @@ import { auth } from '../config/firebase';
 import { Navigate, useNavigate } from 'react-router-dom';
 
 const settings = ['Profile', 'Logout'];
-const settingTransaksi = ['Barang Masuk', 'Barang Keluar'];
-const pages = ['Barang', 'Transaksi']
+const pages = ['Barang']
 
 function ResponsiveAppBar() {
     const navigate = useNavigate()
@@ -133,40 +132,13 @@ function ResponsiveAppBar() {
                             <Button
                                 key={page}
                                 onClick={(event) => {
-                                    console.log(page)
-                                    if (page == 'Transaksi') {
-                                        handleOpenNavMenuLink(event)
-                                    } else {
-                                        openBarang()
-                                    }
+                                    openBarang()
                                 }}
                                 sx={{ my: 2, color: 'white', display: 'block' }}
                             >
                                 {page}
                             </Button>
                         ))}
-                        <Menu
-                            sx={{ mt: '45px' }}
-                            id="menu-appbar"
-                            anchorEl={anchorMenuNav}
-                            anchorOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                            keepMounted
-                            transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                            open={Boolean(anchorMenuNav)}
-                            onClose={handleCloseNavMenuLink}
-                        >
-                            {settingTransaksi.map((setting) => (
-                                <MenuItem key={setting} onClick={() => handleMenu(setting)}>
-                                    <Typography textAlign="center">{setting}</Typography>
-                                </MenuItem>
-                            ))}
-                        </Menu>
                     </Box>
 
                     <Box sx={{ flexGrow: 0 }}>
