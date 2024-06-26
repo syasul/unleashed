@@ -76,7 +76,7 @@ const BarangTable = () => {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Nama</TableCell>
+                            <TableCell>Nama Barang</TableCell>
                             <TableCell>Deskripsi</TableCell>
                             <TableCell>Stok</TableCell>
                             <TableCell>Harga</TableCell>
@@ -89,7 +89,7 @@ const BarangTable = () => {
                                 <TableCell>{barang.name}</TableCell>
                                 <TableCell>{barang.deskripsi}</TableCell>
                                 <TableCell>{barang.stok}</TableCell>
-                                <TableCell>{barang.harga}</TableCell>
+                                <TableCell>Rp. {barang.harga}.00,-</TableCell>
                                 <TableCell>
                                     <Button variant="contained" color="secondary" onClick={() => handleUpdate(barang)}>
                                         Update
