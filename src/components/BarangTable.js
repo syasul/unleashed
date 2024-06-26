@@ -4,6 +4,8 @@ import Box from '@mui/material/Box';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Typography } from '@mui/material';
 import AddBarangModal from './AddBarangModal';
 import UpdateBarangModal from './UpdateBarangModal';
+import { collection, getDocs } from 'firebase/firestore';
+import { firestore } from '../config/firebase';
 
 const BarangTable = () => {
     const [barangs, setBarangs] = useState([]);
@@ -12,8 +14,20 @@ const BarangTable = () => {
     const [currentBarang, setCurrentBarang] = useState(null);
 
     useEffect(() => {
-        setBarangs(dummyData);
+        fetchData()
     }, []);
+
+    const fetchData = async () => {
+        await getDocs(collection(firestore, 'barangs'))
+            .then((querySnapshot) => {
+                const newData = querySnapshot.docs
+                    .map((doc) => ({
+                        ...doc.data(), id: doc.id
+                    }))
+                setBarangs([...newData])
+                console.log(barangs, newData)
+            })
+    }
 
     const handleDelete = (id) => {
         if (window.confirm("Apakah yakin untuk mendelete?")) {
@@ -52,20 +66,16 @@ const BarangTable = () => {
                             <TableCell>Deskripsi</TableCell>
                             <TableCell>Stok</TableCell>
                             <TableCell>Harga</TableCell>
-                            <TableCell>Created At</TableCell>
-                            <TableCell>Updated At</TableCell>
                             <TableCell>Action</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {barangs.map((barang) => (
-                            <TableRow key={barang.id}>
-                                <TableCell>{barang.nama}</TableCell>
+                        {barangs?.map((barang, i) => (
+                            <TableRow key={i}>
+                                <TableCell>{barang.name}</TableCell>
                                 <TableCell>{barang.deskripsi}</TableCell>
                                 <TableCell>{barang.stok}</TableCell>
                                 <TableCell>{barang.harga}</TableCell>
-                                <TableCell>{new Date(barang.createdAt).toLocaleString()}</TableCell>
-                                <TableCell>{new Date(barang.updatedAt).toLocaleString()}</TableCell>
                                 <TableCell>
                                     <Button variant="contained" color="secondary" onClick={() => handleUpdate(barang)}>
                                         Update
