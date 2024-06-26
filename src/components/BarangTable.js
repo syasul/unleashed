@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import dummyData from './dummyData.json';
 import Box from '@mui/material/Box';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Typography } from '@mui/material';
 import AddBarangModal from './AddBarangModal';
 import UpdateBarangModal from './UpdateBarangModal';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { firestore } from '../config/firebase';
 
 const BarangTable = () => {
@@ -14,24 +13,27 @@ const BarangTable = () => {
     const [currentBarang, setCurrentBarang] = useState(null);
 
     useEffect(() => {
-        fetchData()
+        fetchData();
     }, []);
 
     const fetchData = async () => {
-        await getDocs(collection(firestore, 'barangs'))
-            .then((querySnapshot) => {
-                const newData = querySnapshot.docs
-                    .map((doc) => ({
-                        ...doc.data(), id: doc.id
-                    }))
-                setBarangs([...newData])
-                console.log(barangs, newData)
-            })
-    }
+        try {
+            const querySnapshot = await getDocs(collection(firestore, 'barangs'));
+            const newData = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+            setBarangs(newData);
+        } catch (error) {
+            console.error("Error fetching data: ", error);
+        }
+    };
 
-    const handleDelete = (id) => {
+    const handleDelete = async (id) => {
         if (window.confirm("Apakah yakin untuk mendelete?")) {
-            setBarangs(barangs.filter(barang => barang.id !== id));
+            try {
+                await deleteDoc(doc(firestore, 'barangs', id));
+                setBarangs(barangs.filter(barang => barang.id !== id));
+            } catch (error) {
+                console.error("Error deleting document: ", error);
+            }
         }
     };
 
@@ -44,13 +46,25 @@ const BarangTable = () => {
         setBarangs([...barangs, newBarang]);
     };
 
-    const handleUpdateData = (updatedBarang) => {
-        setBarangs(barangs.map(barang => (barang.id === updatedBarang.id ? updatedBarang : barang)));
+    const handleUpdateData = async (updatedBarang) => {
+        try {
+            const barangRef = doc(firestore, 'barangs', updatedBarang.id);
+            await updateDoc(barangRef, {
+                name: updatedBarang.name,
+                deskripsi: updatedBarang.deskripsi,
+                stok: updatedBarang.stok,
+                harga: updatedBarang.harga,
+                updatedAt: updatedBarang.updatedAt,
+            });
+            setBarangs(barangs.map(barang => (barang.id === updatedBarang.id ? updatedBarang : barang)));
+        } catch (error) {
+            console.error("Error updating document: ", error);
+        }
     };
 
     return (
         <>
-            <Box sx={{ display: { xs: 'flex' }, flexDirection: 'row', justifyContent: 'space-between' }}>
+            <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                 <Typography variant="h4">
                     Data Barang
                 </Typography>
