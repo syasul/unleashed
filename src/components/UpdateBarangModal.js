@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { doc, updateDoc, Timestamp } from 'firebase/firestore';
-import { auth, firestore } from '../config/firebase';
 import { Dialog, DialogActions, DialogContent, DialogTitle, TextField, Button } from '@mui/material';
 
-const UpdateBarangModal = ({ open, onClose, barang }) => {
+const UpdateBarangModal = ({ open, onClose, barang, onUpdate }) => {
     const [nama, setNama] = useState('');
     const [deskripsi, setDeskripsi] = useState('');
     const [stok, setStok] = useState('');
@@ -18,15 +16,9 @@ const UpdateBarangModal = ({ open, onClose, barang }) => {
         }
     }, [barang]);
 
-    const handleSubmit = async () => {
-        const docRef = doc(firestore, 'barang', barang.id);
-        await updateDoc(docRef, {
-            nama,
-            deskripsi,
-            stok: parseInt(stok, 10),
-            harga: parseFloat(harga),
-            updatedAt: Timestamp.now()
-        });
+    const handleSubmit = () => {
+        const updatedBarang = { ...barang, nama, deskripsi, stok: parseInt(stok, 10), harga: parseFloat(harga), updatedAt: new Date().toISOString() };
+        onUpdate(updatedBarang);
         onClose();
     };
 

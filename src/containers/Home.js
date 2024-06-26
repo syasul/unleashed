@@ -9,7 +9,7 @@ const Home = () => {
     return (
         <>
             <Box sx={{ margin: 10 }}>
-                <BarangTable />
+                {/* <BarangTable /> */}
             </Box>
         </>
     )

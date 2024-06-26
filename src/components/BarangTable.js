@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
-import { auth, firestore } from '../config/firebase';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import dummyData from './dummyData.json';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@mui/material';
 import AddBarangModal from './AddBarangModal';
 import UpdateBarangModal from './UpdateBarangModal';
 
@@ -12,17 +11,11 @@ const BarangTable = () => {
     const [currentBarang, setCurrentBarang] = useState(null);
 
     useEffect(() => {
-        const fetchData = async () => {
-            const querySnapshot = await getDocs(collection(firestore, 'barang'));
-            const barangList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            setBarangs(barangList);
-        };
-        fetchData();
+        setBarangs(dummyData);
     }, []);
 
-    const handleDelete = async (id) => {
+    const handleDelete = (id) => {
         if (window.confirm("Apakah yakin untuk mendelete?")) {
-            await deleteDoc(doc(firestore, 'barang', id));
             setBarangs(barangs.filter(barang => barang.id !== id));
         }
     };
@@ -30,6 +23,14 @@ const BarangTable = () => {
     const handleUpdate = (barang) => {
         setCurrentBarang(barang);
         setOpenUpdateModal(true);
+    };
+
+    const handleAdd = (newBarang) => {
+        setBarangs([...barangs, newBarang]);
+    };
+
+    const handleUpdateData = (updatedBarang) => {
+        setBarangs(barangs.map(barang => (barang.id === updatedBarang.id ? updatedBarang : barang)));
     };
 
     return (
@@ -57,8 +58,8 @@ const BarangTable = () => {
                                 <TableCell>{barang.deskripsi}</TableCell>
                                 <TableCell>{barang.stok}</TableCell>
                                 <TableCell>{barang.harga}</TableCell>
-                                <TableCell>{barang.createdAt?.toDate().toLocaleString()}</TableCell>
-                                <TableCell>{barang.updatedAt?.toDate().toLocaleString()}</TableCell>
+                                <TableCell>{new Date(barang.createdAt).toLocaleString()}</TableCell>
+                                <TableCell>{new Date(barang.updatedAt).toLocaleString()}</TableCell>
                                 <TableCell>
                                     <Button variant="contained" color="secondary" onClick={() => handleUpdate(barang)}>
                                         Update
@@ -73,8 +74,8 @@ const BarangTable = () => {
                 </Table>
             </TableContainer>
 
-            <AddBarangModal open={openAddModal} onClose={() => setOpenAddModal(false)} />
-            <UpdateBarangModal open={openUpdateModal} onClose={() => setOpenUpdateModal(false)} barang={currentBarang} />
+            <AddBarangModal open={openAddModal} onClose={() => setOpenAddModal(false)} onAdd={handleAdd} />
+            <UpdateBarangModal open={openUpdateModal} onClose={() => setOpenUpdateModal(false)} barang={currentBarang} onUpdate={handleUpdateData} />
         </>
     );
 };

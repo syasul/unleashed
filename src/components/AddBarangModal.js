@@ -1,82 +1,45 @@
-import React, { useState, useEffect } from 'react';
-import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
-import { auth, firestore } from '../config/firebase';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
-import AddBarangModal from './AddBarangModal';
-import UpdateBarangModal from './UpdateBarangModal';
+import React, { useState } from 'react';
+import { Dialog, DialogActions, DialogContent, DialogTitle, TextField, Button } from '@mui/material';
 
-const BarangTable = () => {
-    const [barangs, setBarangs] = useState([]);
-    const [openAddModal, setOpenAddModal] = useState(false);
-    const [openUpdateModal, setOpenUpdateModal] = useState(false);
-    const [currentBarang, setCurrentBarang] = useState(null);
+const AddBarangModal = ({ open, onClose, onAdd }) => {
+    const [nama, setNama] = useState('');
+    const [deskripsi, setDeskripsi] = useState('');
+    const [stok, setStok] = useState('');
+    const [harga, setHarga] = useState('');
 
-    useEffect(() => {
-        const fetchData = async () => {
-            const querySnapshot = await getDocs(collection(firestore, 'barang'));
-            const barangList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            setBarangs(barangList);
+    const handleSubmit = () => {
+        const newBarang = {
+            id: Date.now().toString(),
+            nama,
+            deskripsi,
+            stok: parseInt(stok, 10),
+            harga: parseFloat(harga),
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
         };
-        fetchData();
-    }, []);
-
-    const handleDelete = async (id) => {
-        if (window.confirm("Apakah yakin untuk mendelete?")) {
-            await deleteDoc(doc(firestore, 'barang', id));
-            setBarangs(barangs.filter(barang => barang.id !== id));
-        }
-    };
-
-    const handleUpdate = (barang) => {
-        setCurrentBarang(barang);
-        setOpenUpdateModal(true);
+        onAdd(newBarang);
+        onClose();
+        setNama('');
+        setDeskripsi('');
+        setStok('');
+        setHarga('');
     };
 
     return (
-        <>
-            <Button variant="contained" color="primary" onClick={() => setOpenAddModal(true)}>
-                Tambah Barang
-            </Button>
-            <TableContainer component={Paper} sx={{ marginTop: 4 }}>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Nama</TableCell>
-                            <TableCell>Deskripsi</TableCell>
-                            <TableCell>Stok</TableCell>
-                            <TableCell>Harga</TableCell>
-                            <TableCell>Created At</TableCell>
-                            <TableCell>Updated At</TableCell>
-                            <TableCell>Action</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {barangs.map((barang) => (
-                            <TableRow key={barang.id}>
-                                <TableCell>{barang.nama}</TableCell>
-                                <TableCell>{barang.deskripsi}</TableCell>
-                                <TableCell>{barang.stok}</TableCell>
-                                <TableCell>{barang.harga}</TableCell>
-                                <TableCell>{barang.createdAt?.toDate().toLocaleString()}</TableCell>
-                                <TableCell>{barang.updatedAt?.toDate().toLocaleString()}</TableCell>
-                                <TableCell>
-                                    <Button variant="contained" color="secondary" onClick={() => handleUpdate(barang)}>
-                                        Update
-                                    </Button>
-                                    <Button variant="contained" color="error" onClick={() => handleDelete(barang.id)}>
-                                        Delete
-                                    </Button>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-
-            <AddBarangModal open={openAddModal} onClose={() => setOpenAddModal(false)} />
-            <UpdateBarangModal open={openUpdateModal} onClose={() => setOpenUpdateModal(false)} barang={currentBarang} />
-        </>
+        <Dialog open={open} onClose={onClose}>
+            <DialogTitle>Tambah Barang</DialogTitle>
+            <DialogContent>
+                <TextField label="Nama" fullWidth margin="dense" value={nama} onChange={(e) => setNama(e.target.value)} />
+                <TextField label="Deskripsi" fullWidth margin="dense" value={deskripsi} onChange={(e) => setDeskripsi(e.target.value)} />
+                <TextField label="Stok" type="number" fullWidth margin="dense" value={stok} onChange={(e) => setStok(e.target.value)} />
+                <TextField label="Harga" type="number" fullWidth margin="dense" value={harga} onChange={(e) => setHarga(e.target.value)} />
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={onClose}>Cancel</Button>
+                <Button onClick={handleSubmit} variant="contained" color="primary">Add</Button>
+            </DialogActions>
+        </Dialog>
     );
 };
 
-export default BarangTable;
+export default AddBarangModal;
