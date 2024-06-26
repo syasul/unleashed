@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { Dialog, DialogActions, DialogContent, DialogTitle, TextField, Button } from '@mui/material';
-import { addDoc, collection } from 'firebase/firestore';
+import { addDoc, collection, doc, getDoc, getDocs } from 'firebase/firestore';
 import { firestore } from '../config/firebase';
+import { useNavigate } from 'react-router-dom';
+
 
 const AddBarangModal = ({ open, onClose, onAdd }) => {
+    const navigate = useNavigate()
     const [name, setName] = useState('');
     const [deskripsi, setDeskripsi] = useState('');
     const [stok, setStok] = useState('');
@@ -12,12 +15,16 @@ const AddBarangModal = ({ open, onClose, onAdd }) => {
     const handleSubmit = async (event) => {
         event.preventDefault()
         try {
-            await addDoc(collection(firestore, 'barangs'), {
+            const getId = await addDoc(collection(firestore, 'barangs'), {
                 name: name,
                 deskripsi: deskripsi,
                 stok: parseInt(stok),
                 harga: parseInt(harga)
             })
+            await getDoc(doc(firestore, 'barangs', getId.id))
+                .then((querySnapshot) => {
+                    onAdd(querySnapshot.data())
+                })
             setName('')
             setDeskripsi('')
             setStok('')
