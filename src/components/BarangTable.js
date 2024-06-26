@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import dummyData from './dummyData.json';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@mui/material';
+import Box from '@mui/material/Box';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Typography } from '@mui/material';
 import AddBarangModal from './AddBarangModal';
 import UpdateBarangModal from './UpdateBarangModal';
 
@@ -35,9 +36,14 @@ const BarangTable = () => {
 
     return (
         <>
-            <Button variant="contained" color="primary" onClick={() => setOpenAddModal(true)}>
-                Tambah Barang
-            </Button>
+            <Box sx={{ display: { xs: 'flex' }, flexDirection: 'row', justifyContent: 'space-between' }}>
+                <Typography variant="h4">
+                    Data Barang
+                </Typography>
+                <Button variant="contained" color="primary" onClick={() => setOpenAddModal(true)}>
+                    Tambah Barang
+                </Button>
+            </Box>
             <TableContainer component={Paper} sx={{ marginTop: 4 }}>
                 <Table>
                     <TableHead>

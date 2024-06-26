@@ -62,7 +62,7 @@ function ResponsiveAppBar() {
         }
     }
 
-    const openLogo = () => {
+    const openBarang = () => {
         navigate('/')
     }
 
@@ -114,7 +114,7 @@ function ResponsiveAppBar() {
                         variant="h5"
                         noWrap
                         component="a"
-                        onClick={openLogo}
+                        onClick={openBarang}
                         sx={{
                             mr: 2,
                             display: { xs: 'flex', md: 'none' },
@@ -136,6 +136,8 @@ function ResponsiveAppBar() {
                                     console.log(page)
                                     if (page == 'Transaksi') {
                                         handleOpenNavMenuLink(event)
+                                    } else {
+                                        openBarang()
                                     }
                                 }}
                                 sx={{ my: 2, color: 'white', display: 'block' }}
