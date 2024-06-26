@@ -1,23 +1,21 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import LoginPage from './pages/LoginPage';
-import MasterBarangPage from './pages/MasterBarangPage';
-import TransactionPage from './pages/TransactionPage';
-import Navbar from './components/Navbar';
+import logo from './logo.svg';
 import './App.css';
+import ResponsiveAppBar from './components/Navbar';
+import Home from './containers/Home';
+import { Outlet } from 'react-router-dom';
+import { ThemeProvider } from '@emotion/react';
+import { createTheme } from '@mui/material';
+
+const defaultTheme = createTheme()
 
 function App() {
   return (
-    <Router>
-      <div className="App">
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<LoginPage />} />
-          <Route path="/master-barang" element={<MasterBarangPage />} />
-          <Route path="/transaction" element={<TransactionPage />} />
-        </Routes>
-      </div>
-    </Router>
+    <ThemeProvider theme={defaultTheme}>
+    <div className="App">
+      <ResponsiveAppBar />
+      <Outlet />
+    </div>
+    </ThemeProvider>
   );
 }
 
