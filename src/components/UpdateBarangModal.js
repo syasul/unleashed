@@ -26,7 +26,7 @@ const UpdateBarangModal = ({ open, onClose, barang, onUpdate }) => {
         <Dialog open={open} onClose={onClose}>
             <DialogTitle>Update Barang</DialogTitle>
             <DialogContent>
-                <TextField label="Nama" fullWidth margin="dense" value={name} onChange={(e) => setName(e.target.value)} />
+                <TextField label="Nama Barang" fullWidth margin="dense" value={name} onChange={(e) => setName(e.target.value)} />
                 <TextField label="Deskripsi" fullWidth margin="dense" value={deskripsi} onChange={(e) => setDeskripsi(e.target.value)} />
                 <TextField label="Stok" type="number" fullWidth margin="dense" value={stok} onChange={(e) => setStok(e.target.value)} />
                 <TextField label="Harga" type="number" fullWidth margin="dense" value={harga} onChange={(e) => setHarga(e.target.value)} />
