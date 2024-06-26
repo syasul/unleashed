@@ -17,18 +17,28 @@ import { auth } from '../config/firebase';
 import { Navigate, useNavigate } from 'react-router-dom';
 
 const settings = ['Profile', 'Logout'];
+const settingTransaksi = ['Barang Masuk', 'Barang Keluar'];
 const pages = ['Barang', 'Transaksi']
 
 function ResponsiveAppBar() {
     const navigate = useNavigate()
+    const [anchorMenuNav, setAnchorMenuNav] = React.useState(null);
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
+
+    const handleOpenNavMenuLink = (event) => {
+        setAnchorMenuNav(event.currentTarget)
+    }
 
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
     };
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
+    };
+
+    const handleCloseNavMenuLink = () => {
+        setAnchorElNav(null);
     };
 
     const handleCloseNavMenu = () => {
@@ -59,25 +69,14 @@ function ResponsiveAppBar() {
     return (
         <AppBar position="static">
             <Container maxWidth="xl">
-                <Toolbar disableGutters>
-                    <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
-                    <Typography
-                        variant="h6"
-                        noWrap
-                        component="a"
-                        onClick={openLogo}
-                        sx={{
-                            mr: 2,
-                            display: { xs: 'none', md: 'flex' },
-                            fontFamily: 'monospace',
-                            fontWeight: 700,
-                            letterSpacing: '.3rem',
-                            color: 'inherit',
-                            textDecoration: 'none',
-                        }}
-                    >
-                        LOGO
-                    </Typography>
+                <Toolbar disableGutters
+                    sx={{
+                        display: { xs: "flex" },
+                        flexDirection: "row",
+                        justifyContent: "flex-end"
+                    }}
+                >
+                    <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1, marginRight: "auto" }} />
 
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
                         <IconButton
@@ -129,16 +128,43 @@ function ResponsiveAppBar() {
                     >
                         LOGO
                     </Typography>
-                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, marginLeft: '55em' }}>
+                    <Box sx={{ display: { xs: 'none', md: 'flex' }, marginRight: '2em' }}>
                         {pages.map((page) => (
                             <Button
                                 key={page}
-                                onClick={handleCloseNavMenu}
+                                onClick={(event) => {
+                                    console.log(page)
+                                    if (page == 'Transaksi') {
+                                        handleOpenNavMenuLink(event)
+                                    }
+                                }}
                                 sx={{ my: 2, color: 'white', display: 'block' }}
                             >
                                 {page}
                             </Button>
                         ))}
+                        <Menu
+                            sx={{ mt: '45px' }}
+                            id="menu-appbar"
+                            anchorEl={anchorMenuNav}
+                            anchorOrigin={{
+                                vertical: 'top',
+                                horizontal: 'right',
+                            }}
+                            keepMounted
+                            transformOrigin={{
+                                vertical: 'top',
+                                horizontal: 'right',
+                            }}
+                            open={Boolean(anchorMenuNav)}
+                            onClose={handleCloseNavMenuLink}
+                        >
+                            {settingTransaksi.map((setting) => (
+                                <MenuItem key={setting} onClick={() => handleMenu(setting)}>
+                                    <Typography textAlign="center">{setting}</Typography>
+                                </MenuItem>
+                            ))}
+                        </Menu>
                     </Box>
 
                     <Box sx={{ flexGrow: 0 }}>
